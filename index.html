@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GNNMR：深度互学习的图神经网络在推荐系统中的应用</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ed 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .highlight {
+            position: relative;
+            z-index: 1;
+        }
+        .highlight:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 30%;
+            background-color: rgba(99, 102, 241, 0.2);
+            z-index: -1;
+            transform: rotate(-1deg);
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="container mx-auto px-4 py-12 max-w-6xl">
+        <!-- 头部区域 -->
+        <header class="mb-16 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">GNNMR：深度互学习的图神经网络在推荐系统中的应用</h1>
+            <p class="text-xl text-gray-600 max-w-3xl mx-auto">一种结合图神经网络和深度互学习的多模态推荐系统，有效解决金融领域的数据稀疏和冷启动问题</p>
+        </header>
+
+        <!-- 摘要卡片 -->
+        <section class="mb-16">
+            <div class="bg-white rounded-xl p-8 card-shadow">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">摘要</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-gray-700 mb-4">在金融领域，传统推荐系统依赖用户过往交互数据进行预测推荐，面对数据稀疏和冷启动问题时的预测准确度较低。</p>
+                        <p class="text-gray-700">GNNMR通过对用户与项目的多模态信息（如财务数据、文本描述和图像信息）的有效整合，能够准确预测用户的兴趣偏好，在数据稀疏和冷启动的情况下仍能实现准确预测。</p>
+                    </div>
+                    <div class="bg-gray-50 p-6 rounded-lg">
+                        <h3 class="font-semibold text-gray-800 mb-3">核心优势</h3>
+                        <ul class="space-y-2">
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>解决数据稀疏问题</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>有效应对冷启动挑战</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>多模态信息融合</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-5 w-5 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>提升推荐准确率</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 技术原理部分 -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">技术原理</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white rounded-xl p-8 card-shadow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">图神经网络 (GNN)</h3>
+                    <p class="text-gray-700 mb-6">GNN通过邻居信息聚合机制来学习节点的嵌入表示。每个节点的特征通过结合邻居的关系信息进行多轮迭代调整，使得相邻节点之间的特征表示逐渐趋于相似。</p>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                        <h4 class="font-semibold text-gray-800 mb-2">节点更新公式</h4>
+                        <div class="text-sm bg-gray-100 p-3 rounded overflow-x-auto">
+                            $$h_{u}^{(l + 1)} = \sigma\left( \sum_{v \in \mathcal{N}(u)}^{}{\alpha_{uv}W^{(l)}h_{v}^{(l)}} \right)$$
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <div class="w-full max-w-md">
+                            <canvas id="gnnChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-8 card-shadow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">深度互学习 (DML)</h3>
+                    <p class="text-gray-700 mb-6">深度互学习是一种基于知识蒸馏的模型训练方法，多个模型在训练过程中相互监督、相互学习，通过最小化模型之间输出预测分布的差异来提升整体学习效果。</p>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                        <h4 class="font-semibold text-gray-800 mb-2">KL散度公式</h4>
+                        <div class="text-sm bg-gray-100 p-3 rounded overflow-x-auto">
+                            $$\mathcal{L}_{\mathcal{ML}} = \sum_{i}^{}{D_{KL}\left( p_{i}\, \middle| \, q_{i} \right)} = \sum_{i}^{}{p_{i}\log\frac{p_{i}}{q_{i}}}$$
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-center">
+                        <div class="w-full max-w-md">
+                            <canvas id="dmlChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-8 card-shadow">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">GNNMR模型架构</h3>
+                <p class="text-gray-700 mb-6">GNNMR结合了图神经网络和深度互学习的优势，将多模态用户-项目交互图拆解成多个单模态子图，在每个子图中分别使用独立的图注意力网络进行信息聚合与节点嵌入学习，然后通过深度互学习机制提升不同模态之间嵌入表示的一致性。</p>
+                
+                <div class="flex justify-center mb-6">
+                    <div class="w-full max-w-2xl">
+                        <canvas id="gnnmrChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-indigo-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-indigo-800 mb-2">BPR损失</h4>
+                        <p class="text-sm text-gray-700">确保正负样本之间的正确排序</p>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-purple-800 mb-2">知识蒸馏损失</h4>
+                        <p class="text-sm text-gray-700">提升不同模态间嵌入表示的一致性</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 经济效益部分 -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">经济效益分析</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white rounded-xl p-8 card-shadow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">IGC公司应用GNNMR前后对比</h3>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead>
+                                <tr class="bg-gray-100">
+                                    <th class="py-3 px-4 text-left text-gray-700 font-semibold">单位：千港元</th>
+                                    <th class="py-3 px-4 text-left text-gray-700 font-semibold">2023年</th>
+                                    <th class="py-3 px-4 text-left text-gray-700 font-semibold">2024年</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-200">
+                                    <td class="py-3 px-4 text-gray-700">销售及服务成本</td>
+                                    <td class="py-3 px-4 text-gray-700">213,645</td>
+                                    <td class="py-3 px-4 text-gray-700">330,782</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 text-gray-700">毛利</td>
+                                    <td class="py-3 px-4 text-gray-700">13,066</td>
+                                    <td class="py-3 px-4 text-gray-700">3,182</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-4">数据来源：IGC公司2024年年报</p>
+                </div>
+                
+                <div class="bg-white rounded-xl p-8 card-shadow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">关键效益指标</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-2">精准个性化推荐</h4>
+                            <p class="text-gray-700 text-sm">通过整合多模态信息，准确捕捉用户偏好，提升推荐准确率9.3%，增加收益</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-2">自动化数据处理</h4>
+                            <p class="text-gray-700 text-sm">降低预处理成本，减少因历史数据不足而产生的额外数据采集</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-2">风险管控能力</h4>
+                            <p class="text-gray-700 text-sm">多模态信息互补降低误判风险，动态修正机制增强预测稳定性</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-8 card-shadow">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">市场竞争力与可持续性</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="bg-blue-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-blue-800 mb-2">差异化优势</h4>
+                        <p class="text-sm text-gray-700">多模态信息融合提升用户体验和投资回报</p>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-green-800 mb-2">成本优势</h4>
+                        <p class="text-sm text-gray-700">自动化处理和并行训练降低运营成本</p>
+                    </div>
+                    <div class="bg-yellow-50 p-4 rounded-lg">
+                        <h4 class="font-semibold text-yellow-800 mb-2">扩展性</h4>
+                        <p class="text-sm text-gray-700">模块化设计支持快速功能扩展和技术迭代</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 市场分析部分 -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">市场分析与发展趋势</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 mb-12">
+                <div class="bg-white rounded-xl p-8 card-shadow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">行业发展现状</h3>
+                    <div class="flex items-center mb-4">
+                        <div class="w-3 h-3 bg-indigo-500 rounded-full mr-2"></div>
+                        <span class="text-gray-700">全球金融科技市场中，智能推荐系统的年复合增长率达到18.7%</span>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-3 h-3 bg-indigo-500 rounded-full mr-2"></div>
+                        <span class="text-gray-700">预计到2025年市场规模将突破420亿美元</span>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-3 h-3 bg-indigo-500 rounded-full mr-2"></div>
+                        <span class="text-gray-700">中国头部机构占据约65%的市场份额</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="w-3 h-3 bg-indigo-500 rounded-full mr-2"></div>
+                        <span class="text-gray-700">模态偏差导致部分冷门资产推荐失误率高达12%</span>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl p-8 card-shadow">
+                    <h3 class="text-xl font-bold text-gray-800 mb-6">行业竞争格局</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-1">技术驱动型企业</h4>
+                            <p class="text-gray-700 text-sm">如Kensho和Revolut，通过开源算法和轻资产模式快速扩张</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-1">传统金融机构</h4>
+                            <p class="text-gray-700 text-sm">依托海量用户和政策壁垒占据主导地位，引入深度学习技术提升精准度</p>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-800 mb-1">IGC公司</h4>
+                            <p class="text-gray-700 text-sm">市场占有率达到15%，服务于全球超过200家金融机构</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-8 card-shadow">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">市场趋势与风险</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">技术趋势</h4>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li class="flex items-start">
+                                <svg class="h-4 w-4 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                </svg>
+                                <span>多模态对齐和实时场景优化</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-4 w-4 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                </svg>
+                                <span>GNNMR在冷启动场景下推荐准确率提升9.3%</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 mb-2">政策环境</h4>
+                        <ul class="space-y-2 text-gray-700 text-sm">
+                            <li class="flex items-start">
+                                <svg class="h-4 w-4 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                </svg>
+                                <span>中国《金融科技发展规划》加强AI模型可解释性与数据隐私保护</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="h-4 w-4 text-indigo-500 mr-2 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
+                                </svg>
+                                <span>欧盟《人工智能法案》对高风险推荐系统提出强制合规审查</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 建议与展望部分 -->
+        <section class="mb-16">
+            <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">建议与未来展望</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">金融机构</h3>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <div class="bg-indigo-100 text-indigo-800 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">1</div>
+                            <span>推动多模态推荐系统透明化与场景适配</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-indigo-100 text-indigo-800 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">2</div>
+                            <span>构建动态风险评估模块</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-indigo-100 text-indigo-800 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">3</div>
+                            <span>优化模型轻量化设计以适应移动端部署</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">监管部门</h3>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <div class="bg-purple-100 text-purple-800 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">1</div>
+                            <span>完善AI在金融领域的分类监管体系</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-purple-100 text-purple-800 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">2</div>
+                            <span>鼓励跨机构数据集共享，加强隐私保护</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-purple-100 text-purple-800 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">3</div>
+                            <span>加强对推荐内容的监管，维护消费者权益</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="bg-white rounded-xl p-6 card-shadow">
+                    <h3 class="text-lg font-bold text-gray-800 mb-4">应用改进方向</h3>
+                    <ul class="space-y-3 text-sm text-gray-700">
+                        <li class="flex items-start">
+                            <div class="bg-green-100 text-green-800 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">1</div>
+                            <span>探索"多模态+强化学习"混合架构</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-green-100 text-green-800 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">2</div>
+                            <span>建立行业级测试基准量化评估</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="bg-green-100 text-green-800 rounded-full w-5 h-5 flex items-center justify-center mr-2 mt-0.5 flex-shrink-0">3</div>
+                            <span>推动产学研协同实现技术落地</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl p-8 card-shadow">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">结语</h3>
+                <p class="text-gray-700 mb-4">随着人工智能技术在金融行业的不断深入，传统推荐系统已难以满足日益多元化和个性化的市场需求。GNNMR作为融合图神经网络与深度互学习机制的多模态推荐模型，凭借其在数据稀疏与冷启动问题上的优越表现，为金融机构提供了一种更加精准、高效且具扩展性的智能推荐解决方案。</p>
+                <p class="text-gray-700">面向未来，GNNMR仍有进一步融合强化学习、联邦学习等前沿技术的空间，以应对更复杂、更动态的金融市场环境。我们呼吁产业界、学术界与监管部门加强协同创新，共同迈向智能金融新时代。</p>
+            </div>
+        </section>
+
+        <!-- 作者信息区域 -->
+        <footer class="bg-white rounded-xl p-8 card-shadow">
+            <div class="border-t border-gray-200 pt-8">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">作者信息</h3>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div>
+                        <p class="text-gray-700 mb-4"><span class="font-semibold">作者姓名：</span>王逸凡</p>
+                        <div class="flex space-x-4">
+                            <a href="https://github.com" class="text-indigo-600 hover:text-indigo-800">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path>
+                                </svg>
+                            </a>
+                            <a href="https://twitter.com" class="text-blue-400 hover:text-blue-600">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+                                </svg>
+                            </a>
+                            <a href="https://linkedin.com" class="text-blue-700 hover:text-blue-900">
+                                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                    <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-gray-700 mb-2"><span class="font-semibold">版权信息：</span>© 2025 人工智能研究团队 版权所有</p>
+                        <p class="text-gray-700 text-sm">本作品采用知识共享署名-非商业性使用-相同方式共享 4.0 国际许可协议进行许可。</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // GNN图表
+        const gnnCtx = document.getElementById('gnnChart').getContext('2d');
+        const gnnChart = new Chart(gnnCtx, {
+            type: 'graph',
+            data: {
+                nodes: [
+                    {id: 1, label: '用户A', x: 50, y: 50, color: '#6366F1'},
+                    {id: 2, label: '项目1', x: 150, y: 50, color: '#EC4899'},
+                    {id: 3, label: '项目2', x: 50, y: 150, color: '#EC4899'},
+                    {id: 4, label: '用户B', x: 150, y: 150, color: '#6366F1'}
+                ],
+                edges: [
+                    {from: 1, to: 2, color: '#A5B4FC'},
+                    {from: 1, to: 3, color: '#A5B4FC'},
+                    {from: 4, to: 2, color: '#A5B4FC'},
+                    {from: 4, to: 3, color: '#A5B4FC'}
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {display: false},
+                    title: {
+                        display: true,
+                        text: '用户-项目交互图',
+                        font: {size: 14}
+                    }
+                },
+                elements: {
+                    node: {
+                        radius: 20,
+                        font: {size: 10}
+                    },
+                    edge: {
+                        width: 2
+                    }
+                }
+            }
+        });
+
+        // DML图表
+        const dmlCtx = document.getElementById('dmlChart').getContext('2d');
+        const dmlChart = new Chart(dmlCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['模态A', '模态B', '模态C'],
+                datasets: [{
+                    data: [35, 35, 30],
+                    backgroundColor: ['#6366F1', '#EC4899', '#10B981'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            padding: 20
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: '多模态知识传递',
+                        font: {size: 14}
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        // GNNMR图表
+        const gnnmrCtx = document.getElementById('gnnmrChart').getContext('2d');
+        const gnnmrChart = new Chart(gnnmrCtx, {
+            type: 'bar',
+            data: {
+                labels: ['传统CF', '单模态GNN', 'GNNMR'],
+                datasets: [{
+                    label: '推荐准确率(%)',
+                    data: [72, 78, 87],
+                    backgroundColor: ['#A5B4FC', '#818CF8', '#6366F1'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {display: false},
+                    title: {
+                        display: true,
+                        text: '不同模型在冷启动场景下的性能对比',
+                        font: {size: 14}
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
